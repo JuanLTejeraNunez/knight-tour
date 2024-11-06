@@ -58,3 +58,66 @@ bool in_bound(ii p, int a, int b)
 }
 
 bool visited[MAXN][MAXN];
+
+int get_rating(ii cell, int n)
+{
+  if (!in_bound(cell, 0, n - 1) or visited[cell.first][cell.second])
+    return -1;
+  int sum = 0;
+  ii knight_move[] = {{1, 2}, {-1, 2}, {1, -2}, {-1, -2}, {2, 1}, {2, -1}, {-2, 1}, {-2, -1}};
+  forn(i, 8)
+  {
+    ii possible_move = pair_sum(cell, knight_move[i]);
+    if (in_bound(possible_move, 0, n - 1) and !visited[possible_move.first][possible_move.second])
+      sum++;
+  }
+  return sum;
+}
+
+
+vector<ii> solve_knight_tour(int n)
+{
+  // There are no knight tours for n<=4
+  if (n <= 4)
+    return vector<ii>();
+
+  vector<ii> knight_tour;
+
+  ii pos(random_between(0,n-1), random_between(0,n-1));
+
+  if(n & 1)
+    pos = mkp((n-1)*random_between(0,1),(n-1)*random_between(0,1));
+
+  knight_tour.pb(pos);
+
+  ii knight_move[] = {{1, 2}, {-1, 2}, {1, -2}, {-1, -2}, {2, 1}, {2, -1}, {-2, 1}, {-2, -1}};
+
+  rforn(cells, n * n)
+  {
+    // Blind alley
+    if(visited[pos.first][pos.second])
+      return knight_tour;
+    visited[pos.first][pos.second] = true;
+    ii next_cell(-1, -1);
+    int min_rating = INF;
+    forn(i, 8)
+    {
+      ii posible_move = pair_sum(pos, knight_move[i]);
+      int cell_rating = get_rating(posible_move, n);
+      if (cell_rating != -1 and cell_rating < min_rating)
+      {
+        next_cell = posible_move;
+        min_rating = cell_rating;
+      }
+    }
+
+    // Blind alley
+    if (min_rating == INF)
+      return knight_tour;
+      knight_tour.pb(next_cell);
+
+    pos = next_cell;
+  }
+
+ return knight_tour;
+}
