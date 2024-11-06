@@ -75,7 +75,7 @@ int get_rating(ii cell, int n)
 }
 
 
-vector<ii> solve_knight_tour(int n)
+vector<ii> knight_tour(int n)
 {
   // There are no knight tours for n<=4
   if (n <= 4)
@@ -121,3 +121,52 @@ vector<ii> solve_knight_tour(int n)
 
  return knight_tour;
 }
+
+int main(int argc, char** argv)
+{
+  if(argc<2)
+  {
+    errno = EPERM;
+    perror("Chessboard size dont provided");
+    exit(EXIT_FAILURE);
+  }
+  int n = atoi(argv[1]);
+  if(n < 0)
+  {
+    errno = EINVAL;
+    perror("Chessboard has negative size");
+    exit(EXIT_FAILURE);
+  }
+  if(n>100)
+  {
+    errno = EINVAL;
+    perror("Chessboard size is too large");
+    exit(EXIT_FAILURE);
+  }
+  srand(time(nullptr));
+  vector<ii> knight_tour = knight_tour(n);
+  
+  FILE* output_file;
+
+  if(!(output_file = fopen("knight-tour.txt","w")))
+  {
+    perror("Unable to open knight.txt");
+    exit(EXIT_FAILURE);
+  }
+  
+  if (knight_tour.empty())
+    cout << "NO KNIGHT TOUR" << bn;
+  else
+  {
+    if (knight_tour.size() < n * n)
+      cout << "BLIND ALLEY"<<bn;
+  for (auto p : knight_tour)
+  {
+    ii np = pair_sum(p,mkp(1,1));
+    fprintf(output_file,"(%d %d)\n",np.first,np.second);
+  }
+
+  fclose(output_file);
+  
+  return 0;
+}}
